@@ -3,8 +3,11 @@ package main
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"os"
 
+	"github.com/cenkayla/userbalance/internal/apiserver"
+	"github.com/cenkayla/userbalance/internal/db"
 	"github.com/jackc/pgx/v4"
 )
 
@@ -15,4 +18,7 @@ func main() {
 		os.Exit(1)
 	}
 	defer conn.Close(context.Background())
+	s := db.New(conn)
+	server := apiserver.NewServer(*s)
+	http.ListenAndServe(":8080", server)
 }
